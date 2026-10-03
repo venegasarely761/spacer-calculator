@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motor Spacer Calculator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+<style>
+/* Layout: slim blue banner, then two soft white cards (inputs left, live result right); stacks to one column on phones. Fixed light theme, white and blue only. */
+:root {
+  --white: #ffffff;
+  --blue: #0075c9;
+  --blue-deep: #005a9c;
+  --blue-soft: #8cc2ea;
+  --blue-50: #f3f8fd;
+  --blue-100: #e3f0fa;
+  --line: #dce8f2;
+  --ink: #0f2a40;
+  --ink-soft: #5a7288;
+  --green: #2e9e5b;
+  --orange: #e8832a;
+  --yellow: #f2c230;
+  --alert: #b3261e;
+  --alert-bg: #fdeeed;
+  --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.banner { position: relative; background: var(--blue); color: var(--white); padding: 32px 16px; text-align: center; }
+.ver { position: absolute; top: 10px; right: 14px; font-size: 12px; font-weight: 500; color: var(--white); opacity: 0.85; }
+.wrap { max-width: 960px; margin-inline: auto; }
+.banner h1 { margin: 0; font-size: clamp(24px, 4.5vw, 32px); font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+.banner p { margin: 6px auto 0; font-size: 15px; opacity: 0.9; max-width: 56ch; text-wrap: balance; }
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px 16px 48px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+@media (max-width: 760px) { main { grid-template-columns: minmax(0, 1fr); } }
+section { min-width: 0; display: grid; }
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0, 90, 156, 0.06), 0 8px 24px rgba(0, 90, 156, 0.08);
+  padding: 20px;
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+.card h2 { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+/* shaft input */
+.shaft { display: grid; gap: 6px; }
+.shaft label { font-weight: 500; }
+.unit-field { display: inline-flex; align-items: center; width: 150px; background: var(--blue-50); border: 1.5px solid var(--line); border-radius: 10px; padding-right: 12px; }
+.unit-field:focus-within { border-color: var(--blue); background: var(--white); }
+.field { width: 100%; min-width: 0; border: 0; background: transparent; font: 500 18px var(--font); color: var(--ink); padding: 10px 6px 10px 12px; outline: none; font-variant-numeric: tabular-nums; }
+.unit-field span { color: var(--ink-soft); font-weight: 500; }
+.hint { font-size: 13px; color: var(--ink-soft); }
+
+/* parts */
+.parts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.part {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+.part:nth-child(odd) { background: var(--blue-100); border-color: var(--blue-soft); }
+.part:nth-child(odd) .chip, .part:nth-child(odd) .step { background: var(--white); }
+.part:nth-child(odd) .step:hover { background: var(--blue); color: var(--white); }
+.part.on { border-color: var(--blue-soft); }
+.part-main { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-width: 0; }
+.part-name { font-weight: 500; }
+.chip { font-size: 12px; font-weight: 500; color: var(--blue-deep); background: var(--blue-100); border-radius: 999px; padding: 1px 9px; white-space: nowrap; }
+.stepper { display: flex; align-items: center; gap: 2px; }
+.step {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border: 0; border-radius: 50%;
+  background: var(--blue-100);
+  color: var(--blue-deep);
+  font: 500 20px/1 var(--font);
+  cursor: pointer;
+}
+.step:hover { background: var(--blue); color: var(--white); }
+.step:focus-visible, .reset:focus-visible { outline: 3px solid var(--blue-soft); outline-offset: 2px; }
+.qty {
+  width: 38px; text-align: center;
+  border: 0; background: transparent;
+  font: 500 17px var(--font); color: var(--ink);
+  padding: 4px 0;
+  -moz-appearance: textfield;
+  font-variant-numeric: tabular-nums;
+}
+.qty::-webkit-outer-spin-button, .qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.qty:focus-visible { outline: 2px solid var(--blue-soft); border-radius: 6px; }
+.reset { width: 100%; border: 2px solid var(--blue); background: var(--blue); color: var(--white); font: 700 15px var(--font); padding: 11px 16px; border-radius: 10px; cursor: pointer; }
+.reset:hover { background: var(--blue-deep); border-color: var(--blue-deep); }
+.example { font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); background: var(--blue-50); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; }
+
+/* result */
+.hero { background: var(--blue); color: var(--white); border-radius: 12px; padding: 16px 18px; display: grid; gap: 2px; }
+.hero .big { font-size: 34px; font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; }
+.hero .sub { font-size: 14px; opacity: 0.92; }
+.hero.bad { background: var(--alert-bg); color: var(--alert); }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.tile { position: relative; width: 100%; font: inherit; color: inherit; cursor: pointer; border: 1px solid var(--blue-100); background: var(--blue-50); border-radius: 12px; padding: 12px 8px; text-align: center; }
+.tile > span { display: block; }
+.tile:hover { border-color: var(--blue-soft); }
+.tile:focus-visible { outline: 3px solid var(--blue-soft); outline-offset: 2px; }
+.tile.zero { background: var(--white); border-color: var(--line); }
+.tile .size { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+.tile .count { font-size: 30px; font-weight: 700; line-height: 1.15; color: var(--blue); }
+.tile.zero .count { color: var(--blue-soft); font-weight: 500; }
+.tile .pn { font-size: 12px; font-weight: 500; color: var(--blue-deep); margin-top: 2px; white-space: nowrap; }
+.tile.zero .pn { color: var(--ink-soft); }
+.tile.off { border-color: var(--line); opacity: 0.55; filter: grayscale(1); }
+.tile.off:hover { opacity: 0.8; }
+.chk { position: absolute; top: 8px; right: 8px; width: 16px; height: 16px; border: 1.5px solid var(--blue-soft); border-radius: 5px; background: var(--white); }
+.tile[aria-pressed="true"] .chk { background: var(--blue); border-color: var(--blue); }
+.tile[aria-pressed="true"] .chk::after { content: ""; position: absolute; left: 4px; top: 0; width: 4px; height: 8px; border: solid var(--white); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+
+.bar-wrap { display: grid; gap: 8px; }
+.bar { position: relative; height: 46px; background: var(--white); }
+.seg { position: absolute; top: 0; bottom: 0; min-width: 0; display: grid; place-items: center; border: 2px solid var(--white); border-radius: 9px; background: var(--blue); color: var(--white); font-size: 11px; font-weight: 500; overflow: hidden; white-space: nowrap; user-select: none; -webkit-user-select: none; }
+.seg.alt { background: var(--blue-deep); }
+.seg.spacer { color: var(--white); border-radius: 6px; }
+.c4, .seg.c4, .legend i.c4 { background: var(--green); }
+.c2, .seg.c2, .legend i.c2 { background: var(--orange); }
+.c1, .seg.c1, .legend i.c1 { background: var(--yellow); }
+.seg.c1 { color: var(--ink); }
+.seg.hole { background: repeating-linear-gradient(45deg, var(--alert-bg), var(--alert-bg) 4px, var(--white) 4px, var(--white) 8px); border: 2px dashed var(--alert); border-radius: 6px; }
+.lg-toggle { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 12px; color: var(--ink-soft); background: none; border: 0; padding: 2px 6px; margin: -2px -6px; border-radius: 6px; cursor: pointer; }
+.lg-toggle:hover { background: var(--blue-50); }
+.lg-toggle:focus-visible { outline: 3px solid var(--blue-soft); outline-offset: 1px; }
+.lg-toggle i { margin: 0; }
+.lg-toggle.off { opacity: 0.5; filter: grayscale(1); }
+.seg.over { background: var(--alert); }
+.seg.blk { cursor: grab; touch-action: none; }
+.bar.locked .seg.blk { cursor: default; }
+.bar.grabbing, .bar.grabbing .seg.blk { cursor: grabbing; }
+.seg.blk.dragging { z-index: 2; box-shadow: 0 3px 10px rgba(0, 90, 156, 0.4); }
+.dims { position: relative; height: 24px; }
+.dim { position: absolute; top: 0; height: 100%; border-left: 1.5px solid var(--blue); border-right: 1.5px solid var(--blue); pointer-events: none; }
+.dim::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1.5px solid var(--blue); }
+.dim span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--white); color: var(--blue-deep); font-size: 12px; font-weight: 500; padding: 0 4px; white-space: nowrap; }
+.bar-scale { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-soft); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--ink-soft); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; background: var(--blue); margin-right: 6px; vertical-align: -2px; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
+.legend i.alt { background: var(--blue-deep); }
+.legend i.over { background: var(--alert); }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+td { padding: 8px 0; border-top: 1px solid var(--line); }
+tr:first-child td { border-top: 0; }
+td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ink-soft); padding-left: 12px; }
+tr.total td { border-top: 1.5px solid var(--blue); font-weight: 700; color: var(--ink); }
+tr.total td.num { color: var(--blue-deep); }
+.note { font-size: 13px; color: var(--ink-soft); margin: 0; }
+@media (prefers-reduced-motion: no-preference) { .step, .unit-field, .part { transition: background 0.15s ease, border-color 0.15s ease; } }
+</style>
+</head>
+<body>
+
+<header class="banner">
+  <span class="ver" id="ver">v1.0.0</span>
+  <div class="wrap">
+    <h1>Motor Spacer Calculator</h1>
+    <p>How many spacers fill the SplineXS</p>
+  </div>
+</header>
+
+<main>
+  <section aria-labelledby="inputs-h">
+    <div class="card">
+      <div class="shaft">
+        <label for="shaft">SplineXS shaft length</label>
+        <span class="unit-field"><input class="field" id="shaft" type="number" inputmode="decimal" step="0.0625" min="0.0625" value="1.25"><span>in</span></span>
+        <span class="hint">Kraken X60 / X44 shaft is 1.25". Change it if your motor differs.</span>
+      </div>
+      <div style="display:grid;gap:8px">
+        <div class="head"><h2 id="inputs-h">Parts on the shaft</h2><span class="example" id="exTag">Example</span></div>
+        <ul class="parts" id="parts"></ul>
+      </div>
+      <button class="reset" id="reset" type="button">Clear all parts</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="result-h">
+    <div class="card">
+      <h2 id="result-h">Spacers needed</h2>
+      <div class="hero" id="status" aria-live="polite"></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="bar-wrap">
+        <div class="bar" id="bar" role="group" aria-label="Shaft layout"></div>
+        <div class="dims" id="dims" aria-hidden="true"></div>
+        <div class="bar-scale"><span>Motor face</span><span id="scaleEnd"></span></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="table-wrap">
+        <table><tbody id="rows"></tbody></table>
+      </div>
+      <p class="note">Drag a part along the shaft to slide it in 1/16" steps. Click a spacer size above or in the key to turn it on or off. Spacers fill each gap with the fewest pieces from the sizes that are on.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var U = 16; // sixteenths of an inch per inch
+  var PARTS = [
+    { id: "pinion", name: "Pinion", chip: '3/4"', label: 'Pinion 3/4"', u: 12 },
+    { id: "gear", name: "SplineXS Gear", chip: '1/2" wide', label: 'SplineXS Gear 1/2" wide', u: 8 },
+    { id: "sprocket", name: "#25 / #35 sprocket", chip: '3/8"', label: '#25 / #35 sprocket', u: 6 },
+    { id: "pfull", name: "Full-length pulley", chip: "Legacy Pulleys", label: "Full-length pulley", u: null },
+    { id: "p875", name: "15mm Wide Pulley", chip: '7/8"', label: '15mm Wide Pulley 7/8"', u: 14 },
+    { id: "p75", name: "9mm Wide (GT2 3mm)", chip: '3/4"', label: '9mm Wide (GT2 3mm) 3/4"', u: 12 },
+    { id: "p5625", name: "9mm Wide Pulley", chip: '9/16"', label: '9mm Wide Pulley 9/16"', u: 9 },
+    { id: "hexad", name: "SplineXS to Rounded Hex Adapter", chip: '1"', label: 'SplineXS to Rounded Hex Adapter 1"', u: 16 }
+  ];
+  var SPACERS = [
+    { u: 4, label: '1/4"', pn: "WCP-1405" },
+    { u: 2, label: '1/8"', pn: "WCP-1404" },
+    { u: 1, label: '1/16"', pn: "WCP-1403" }
+  ];
+  var qty = {};
+  PARTS.forEach(function (p) { qty[p.id] = 0; });
+  qty.pinion = 1; // example setup
+
+  var enabled = [true, true, true]; // which spacer sizes are allowed in the stack, same order as SPACERS
+  var focusTile = -1, focusLegend = -1;
+  var inst = [];        // parts on the shaft, left to right: { label, u, pos } in sixteenths
+  var layoutSig = "";   // changes when quantities or shaft length change, which re-packs the layout
+  var curSU = 0, curTotal = 1, locked = false, drag = null;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var shaftEl = $("shaft");
+  var barEl = $("bar");
+
+  function shaftU() {
+    var v = parseFloat(shaftEl.value);
+    if (!isFinite(v) || v <= 0) return 0;
+    return Math.round(Math.min(v, 6) * U);
+  }
+  function partU(p, sU) { return p.u === null ? sU : p.u; }
+  function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+  function fmt(u) {
+    if (u === 0) return '0"';
+    var whole = Math.floor(u / U), r = u % U, s;
+    if (r === 0) s = String(whole);
+    else {
+      var g = gcd(r, U), frac = (r / g) + "/" + (U / g);
+      s = whole ? whole + "-" + frac : frac;
+    }
+    return s + '"';
+  }
+  function dec(u) { return (u / U).toFixed(4).replace(/0+$/, "").replace(/\.$/, ""); }
+  function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+
+  function buildParts() {
+    var html = "";
+    PARTS.forEach(function (p) {
+      var nm = esc(p.name + " " + p.chip);
+      html += '<li class="part" id="row-' + p.id + '"><div class="part-main"><span class="part-name">' + esc(p.name) + '</span><span class="chip">' + esc(p.chip) + '</span></div>' +
+        '<div class="stepper">' +
+        '<button class="step" type="button" data-id="' + p.id + '" data-d="-1" aria-label="Remove one ' + nm + '">&minus;</button>' +
+        '<input class="qty" id="qty-' + p.id + '" type="number" inputmode="numeric" min="0" max="9" value="' + qty[p.id] + '" aria-label="' + nm + ' quantity">' +
+        '<button class="step" type="button" data-id="' + p.id + '" data-d="1" aria-label="Add one ' + nm + '">+</button>' +
+        '</div></li>';
+    });
+    $("parts").innerHTML = html;
+  }
+
+  // fewest pieces from the sizes that are switched on; "left" is whatever those sizes can't fill
+  function solve(rem) {
+    var out = [], left = rem;
+    SPACERS.forEach(function (s, i) {
+      var n = enabled[i] ? Math.floor(left / s.u) : 0;
+      left -= n * s.u;
+      out.push(n);
+    });
+    return { c: out, left: left };
+  }
+
+  function packLayout(sU) {
+    inst = [];
+    var pos = 0;
+    PARTS.forEach(function (p) {
+      for (var k = 0; k < qty[p.id]; k++) {
+        var u = partU(p, sU);
+        inst.push({ label: p.label, u: u, pos: pos });
+        pos += u;
+      }
+    });
+  }
+
+  // Slide part i by d sixteenths from the positions in base. Neighbors get pushed, and nothing leaves the shaft.
+  function shiftParts(i, d, base) {
+    var n = inst.length;
+    if (!n) return;
+    function place(dd) {
+      var pos = base.slice(), j;
+      pos[i] = base[i] + dd;
+      for (j = i + 1; j < n; j++) pos[j] = Math.max(base[j], pos[j - 1] + inst[j - 1].u);
+      for (j = i - 1; j >= 0; j--) pos[j] = Math.min(base[j], pos[j + 1] - inst[j].u);
+      return pos;
+    }
+    function fits(pos) { return pos[0] >= 0 && pos[n - 1] + inst[n - 1].u <= curSU; }
+    var step = d > 0 ? -1 : 1, dd = d, pos = place(dd);
+    while (!fits(pos) && dd !== 0) { dd += step; pos = place(dd); }
+    for (var k = 0; k < n; k++) inst[k].pos = pos[k];
+  }
+
+  function setStatus(bad, big, sub) {
+    var el = $("status");
+    el.className = "hero" + (bad ? " bad" : "");
+    el.innerHTML = '<div class="big">' + esc(big) + '</div><div class="sub">' + esc(sub) + "</div>";
+  }
+
+  function render() {
+    var sU = shaftU();
+    var used = 0, items = [];
+    PARTS.forEach(function (p) {
+      var n = qty[p.id], row = $("row-" + p.id);
+      if (row) row.classList.toggle("on", n > 0);
+      if (n > 0) {
+        var each = partU(p, sU);
+        used += each * n;
+        items.push({ name: p.label, n: n, each: each });
+      }
+    });
+    var anyParts = items.length > 0;
+    $("exTag").hidden = !(qty.pinion === 1 && PARTS.every(function (p) { return p.id === "pinion" || qty[p.id] === 0; }));
+
+    if (!sU) {
+      setStatus(true, "Check shaft length", "Enter a length greater than 0.");
+      $("tiles").innerHTML = ""; barEl.innerHTML = ""; $("rows").innerHTML = ""; $("scaleEnd").textContent = ""; $("dims").innerHTML = "";
+      inst = []; layoutSig = "";
+      return;
+    }
+
+    var sig = sU + "|" + PARTS.map(function (p) { return qty[p.id]; }).join(",");
+    if (sig !== layoutSig) { layoutSig = sig; packLayout(sU); }
+
+    var rem = sU - used, over = rem < 0;
+    locked = over;
+
+    // gaps between parts, each filled with its own fewest-piece spacer set
+    var gaps = [], cursor = 0;
+    if (!over) {
+      inst.forEach(function (o) {
+        if (o.pos > cursor) gaps.push({ start: cursor, len: o.pos - cursor });
+        cursor = o.pos + o.u;
+      });
+      if (sU > cursor) gaps.push({ start: cursor, len: sU - cursor });
+    }
+    var counts = [0, 0, 0], spacerSegs = [], holes = [], leftover = 0;
+    gaps.forEach(function (g) {
+      var r = solve(g.len), c = r.c, at = g.start;
+      SPACERS.forEach(function (s, i) {
+        for (var k = 0; k < c[i]; k++) { spacerSegs.push({ s: s, pos: at }); at += s.u; }
+        counts[i] += c[i];
+      });
+      if (r.left > 0) { holes.push({ pos: at, len: r.left }); leftover += r.left; }
+    });
+    var anyEnabled = enabled.some(function (v) { return v; });
+    var spacerU = over ? 0 : rem - leftover;
+    var pieces = counts[0] + counts[1] + counts[2];
+    var word = pieces === 1 ? " spacer" : " spacers";
+
+    if (over) setStatus(true, "Over by " + fmt(-rem), "Parts are longer than the " + fmt(sU) + " shaft. Remove or swap a part.");
+    else if (!anyEnabled && rem > 0) setStatus(true, "No sizes selected", "Turn on at least one spacer size above.");
+    else if (leftover > 0) setStatus(true, fmt(leftover) + " left unfilled", "The sizes you picked can't fill every gap. Turn on a smaller size or drag a part to change the gaps.");
+    else if (!anyParts) setStatus(false, pieces + word, "Add parts to see how the shaft fills. A bare shaft takes this many.");
+    else if (rem === 0) setStatus(false, "0 spacers", "Your parts fill the whole " + fmt(sU) + " shaft.");
+    else setStatus(false, pieces + word, "to fill the remaining " + fmt(rem) + (gaps.length > 1 ? " across " + gaps.length + " gaps." : "."));
+
+    var tiles = "";
+    SPACERS.forEach(function (s, i) {
+      var on = enabled[i];
+      tiles += '<button type="button" class="tile' + (!on ? " off" : counts[i] === 0 ? " zero" : "") + '" data-i="' + i + '" aria-pressed="' + on + '" aria-label="' + s.label + " spacer, " + (on ? "on" : "off") + '">' +
+        '<span class="chk"></span><span class="count">' + counts[i] + '</span><span class="size"><i class="dot c' + s.u + '"></i>' + s.label + '</span><span class="pn">' + s.pn + "</span></button>";
+    });
+    $("tiles").innerHTML = tiles;
+    if (focusTile >= 0) {
+      var tb = $("tiles").querySelector('[data-i="' + focusTile + '"]');
+      if (tb) tb.focus();
+      focusTile = -1;
+    }
+
+    var total = Math.max(sU, used);
+    curSU = sU; curTotal = total;
+    function pct(v) { return (v / total * 100) + "%"; }
+    var bar = "";
+    inst.forEach(function (o, i) {
+      var where = "starts " + fmt(o.pos) + " from the motor face";
+      bar += '<div class="seg blk' + (i % 2 ? " alt" : "") + (over ? " over" : "") + (drag && drag.i === i ? " dragging" : "") + '" data-i="' + i + '" style="left:' + pct(o.pos) + ";width:" + pct(o.u) + '"' +
+        ' title="' + esc(o.label + ", " + where) + '">' + (o.u / total > 0.12 ? fmt(o.u) : "") + "</div>";
+    });
+    spacerSegs.forEach(function (x) {
+      bar += '<div class="seg spacer c' + x.s.u + '" style="left:' + pct(x.pos) + ";width:" + pct(x.s.u) + '" title="' + x.s.label + ' spacer"></div>';
+    });
+    holes.forEach(function (h) {
+      bar += '<div class="seg hole" style="left:' + pct(h.pos) + ";width:" + pct(h.len) + '" title="' + esc(fmt(h.len)) + ' not filled"></div>';
+    });
+    barEl.className = "bar" + (locked ? " locked" : "") + (drag ? " grabbing" : "");
+    barEl.innerHTML = bar;
+    barEl.setAttribute("aria-label", "Shaft layout: " + fmt(used) + " of parts and " + fmt(spacerU) + " of spacers on a " + fmt(sU) + " shaft");
+    var dimHtml = "";
+    gaps.forEach(function (g) {
+      dimHtml += '<div class="dim" style="left:' + pct(g.start) + ";width:" + pct(g.len) + '"><span>' + fmt(g.len) + "</span></div>";
+    });
+    $("dims").innerHTML = dimHtml;
+    $("scaleEnd").textContent = "Shaft end"; $("scaleEnd").title = fmt(total) + " from the motor face";
+    var legend = "";
+    inst.forEach(function (o, i) {
+      legend += '<span><i class="' + (i % 2 ? "alt" : "") + (over ? " over" : "") + '"></i>' + esc(o.label) + "</span>";
+    });
+    SPACERS.forEach(function (s, i) {
+      legend += '<button type="button" class="lg-toggle' + (enabled[i] ? "" : " off") + '" data-i="' + i + '" aria-pressed="' + enabled[i] + '"><i class="c' + s.u + '"></i>' + s.label + " spacer</button>";
+    });
+    $("legend").innerHTML = legend;
+    if (focusLegend >= 0) {
+      var lb = $("legend").querySelector('[data-i="' + focusLegend + '"]');
+      if (lb) lb.focus();
+      focusLegend = -1;
+    }
+
+    var rows = "";
+    items.forEach(function (it) {
+      rows += "<tr><td>" + esc(it.name) + (it.n > 1 ? " &times; " + it.n : "") + '</td><td class="num">' + fmt(it.each * it.n) + "</td></tr>";
+    });
+    SPACERS.forEach(function (s, i) {
+      if (counts[i] > 0) rows += "<tr><td>" + s.label + " spacer (" + s.pn + ") &times; " + counts[i] + '</td><td class="num">' + fmt(s.u * counts[i]) + "</td></tr>";
+    });
+    if (leftover > 0) rows += '<tr><td>Not filled</td><td class="num">' + fmt(leftover) + "</td></tr>";
+    rows += '<tr class="total"><td>Total on shaft</td><td class="num">' + fmt(used + spacerU) + " (" + dec(used + spacerU) + ' in)</td></tr>';
+    $("rows").innerHTML = rows;
+  }
+
+  function setQty(id, v) {
+    v = Math.max(0, Math.min(9, isFinite(v) ? Math.round(v) : 0));
+    qty[id] = v;
+    var el = $("qty-" + id);
+    if (el && String(el.value) !== String(v)) el.value = v;
+    render();
+  }
+
+  $("parts").addEventListener("click", function (e) {
+    var b = e.target.closest("button.step");
+    if (!b) return;
+    var id = b.getAttribute("data-id");
+    setQty(id, qty[id] + parseInt(b.getAttribute("data-d"), 10));
+  });
+  $("parts").addEventListener("input", function (e) {
+    if (e.target.classList.contains("qty")) {
+      var id = e.target.id.replace("qty-", ""), v = parseInt(e.target.value, 10);
+      qty[id] = Math.max(0, Math.min(9, isFinite(v) ? v : 0));
+      render();
+    }
+  });
+  $("parts").addEventListener("change", function (e) {
+    if (e.target.classList.contains("qty")) { e.target.value = qty[e.target.id.replace("qty-", "")]; }
+  });
+  shaftEl.addEventListener("input", render);
+  $("reset").addEventListener("click", function () {
+    PARTS.forEach(function (p) { qty[p.id] = 0; var el = $("qty-" + p.id); if (el) el.value = 0; });
+    render();
+  });
+
+  // switch a spacer size on or off
+  $("tiles").addEventListener("click", function (e) {
+    var t = e.target.closest(".tile");
+    if (!t) return;
+    var i = parseInt(t.getAttribute("data-i"), 10);
+    enabled[i] = !enabled[i];
+    focusTile = i;
+    render();
+  });
+
+  $("legend").addEventListener("click", function (e) {
+    var t = e.target.closest(".lg-toggle");
+    if (!t) return;
+    var i = parseInt(t.getAttribute("data-i"), 10);
+    enabled[i] = !enabled[i];
+    focusLegend = i;
+    render();
+  });
+
+  // drag a part along the shaft, snapping to 1/16" (the smallest spacer)
+  function positions() { return inst.map(function (o) { return o.pos; }); }
+  barEl.addEventListener("pointerdown", function (e) {
+    var seg = e.target.closest(".seg.blk");
+    if (!seg || locked || e.button > 0) return;
+    e.preventDefault();
+    drag = { i: parseInt(seg.getAttribute("data-i"), 10), x0: e.clientX, base: positions() };
+    try { barEl.setPointerCapture(e.pointerId); } catch (err) {}
+    render();
+  });
+  barEl.addEventListener("pointermove", function (e) {
+    if (!drag) return;
+    var pxPerU = barEl.getBoundingClientRect().width / curTotal;
+    shiftParts(drag.i, Math.round((e.clientX - drag.x0) / pxPerU), drag.base);
+    render();
+  });
+  function endDrag() {
+    if (!drag) return;
+    drag = null;
+    render();
+  }
+  barEl.addEventListener("pointerup", endDrag);
+  barEl.addEventListener("pointercancel", endDrag);
+  barEl.addEventListener("lostpointercapture", endDrag);
+
+  buildParts();
+  render();
+})();
+</script>
+
+</body>
+</html>
