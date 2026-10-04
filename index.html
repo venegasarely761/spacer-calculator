@@ -34,22 +34,21 @@ body {
   line-height: 1.5;
   font-variant-numeric: tabular-nums;
 }
-.banner { position: relative; background: var(--blue); color: var(--white); padding: 32px 16px; text-align: center; }
-.ver { position: absolute; top: 10px; right: 14px; font-size: 12px; font-weight: 500; color: var(--white); opacity: 0.85; }
+.banner { position: relative; background: var(--blue); color: var(--white); padding: 18px 16px; text-align: center; border-radius: 16px; width: min(928px, calc(100% - 32px)); margin: 16px auto 0; }
+.ver { position: absolute; top: 10px; right: 16px; font-size: 12px; font-weight: 500; color: var(--white); opacity: 0.85; }
 .wrap { max-width: 960px; margin-inline: auto; }
-.banner h1 { margin: 0; font-size: clamp(24px, 4.5vw, 32px); font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
-.banner p { margin: 6px auto 0; font-size: 15px; opacity: 0.9; max-width: 56ch; text-wrap: balance; }
+.banner h1 { margin: 0; font-size: clamp(22px, 4vw, 28px); font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+.banner p { margin: 2px auto 0; font-size: 15px; opacity: 0.9; max-width: 56ch; text-wrap: balance; }
 
 main {
   max-width: 960px;
   margin: 0 auto;
-  padding: 28px 16px 48px;
+  padding: 8px 16px 32px;
   display: grid;
-  gap: 16px;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: stretch;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
 }
-@media (max-width: 760px) { main { grid-template-columns: minmax(0, 1fr); } }
 section { min-width: 0; display: grid; }
 
 .card {
@@ -75,26 +74,26 @@ section { min-width: 0; display: grid; }
 .hint { font-size: 13px; color: var(--ink-soft); }
 
 /* parts */
-.parts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.parts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .part {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 10px;
-  padding: 8px 8px 8px 12px;
+  gap: 8px;
+  padding: 6px 8px 6px 12px;
   border-radius: 12px;
-  border: 1px solid transparent;
+  border: 1px solid var(--blue-soft);
 }
-.part:nth-child(odd) { background: var(--blue-100); border-color: var(--blue-soft); }
-.part:nth-child(odd) .chip, .part:nth-child(odd) .step { background: var(--white); }
-.part:nth-child(odd) .step:hover { background: var(--blue); color: var(--white); }
+.part { background: var(--blue-100); border-color: var(--blue-soft); }
+.part .chip, .part .step { background: var(--white); }
+.part .step:hover { background: var(--blue); color: var(--white); }
 .part.on { border-color: var(--blue-soft); }
 .part-main { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-width: 0; }
 .part-name { font-weight: 500; }
 .chip { font-size: 12px; font-weight: 500; color: var(--blue-deep); background: var(--blue-100); border-radius: 999px; padding: 1px 9px; white-space: nowrap; }
 .stepper { display: flex; align-items: center; gap: 2px; }
 .step {
-  width: 34px; height: 34px;
+  width: 30px; height: 30px;
   display: grid; place-items: center;
   border: 0; border-radius: 50%;
   background: var(--blue-100);
@@ -119,9 +118,9 @@ section { min-width: 0; display: grid; }
 .example { font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); background: var(--blue-50); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; }
 
 /* result */
-.hero { background: var(--blue); color: var(--white); border-radius: 12px; padding: 16px 18px; display: grid; gap: 2px; }
-.hero .big { font-size: 34px; font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; }
-.hero .sub { font-size: 14px; opacity: 0.92; }
+.hero { background: var(--blue); color: var(--white); border-radius: 12px; padding: 9px 14px; display: grid; gap: 2px; }
+.hero .big { font-size: 24px; font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; }
+.hero .sub { font-size: 13px; opacity: 0.92; }
 .hero.bad { background: var(--alert-bg); color: var(--alert); }
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .tile { position: relative; width: 100%; font: inherit; color: inherit; cursor: pointer; border: 1px solid var(--blue-100); background: var(--blue-50); border-radius: 12px; padding: 12px 8px; text-align: center; }
@@ -155,6 +154,7 @@ section { min-width: 0; display: grid; }
 .lg-toggle:focus-visible { outline: 3px solid var(--blue-soft); outline-offset: 1px; }
 .lg-toggle i { margin: 0; }
 .lg-toggle.off { opacity: 0.5; filter: grayscale(1); }
+.seg.empty { background: repeating-linear-gradient(45deg, #dcebf7, #dcebf7 4px, var(--white) 4px, var(--white) 8px); border: 2px dashed #7fb0d8; border-radius: 6px; }
 .seg.over { background: var(--alert); }
 .seg.blk { cursor: grab; touch-action: none; }
 .bar.locked .seg.blk { cursor: default; }
@@ -185,7 +185,7 @@ tr.total td.num { color: var(--blue-deep); }
 <body>
 
 <header class="banner">
-  <span class="ver" id="ver">v1.0.0</span>
+  <span class="ver" id="ver">v1.0.1</span>
   <div class="wrap">
     <h1>Motor Spacer Calculator</h1>
     <p>How many spacers fill the SplineXS</p>
@@ -390,7 +390,8 @@ tr.total td.num { color: var(--blue-deep); }
     var pieces = counts[0] + counts[1] + counts[2];
     var word = pieces === 1 ? " spacer" : " spacers";
 
-    if (over) setStatus(true, "Over by " + fmt(-rem), "Parts are longer than the " + fmt(sU) + " shaft. Remove or swap a part.");
+    if (drag && !over) setStatus(false, "Release to place", "Spacers are counted when you let go.");
+    else if (over) setStatus(true, "Over by " + fmt(-rem), "Parts are longer than the " + fmt(sU) + " shaft. Remove or swap a part.");
     else if (!anyEnabled && rem > 0) setStatus(true, "No sizes selected", "Turn on at least one spacer size above.");
     else if (leftover > 0) setStatus(true, fmt(leftover) + " left unfilled", "The sizes you picked can't fill every gap. Turn on a smaller size or drag a part to change the gaps.");
     else if (!anyParts) setStatus(false, pieces + word, "Add parts to see how the shaft fills. A bare shaft takes this many.");
@@ -400,8 +401,8 @@ tr.total td.num { color: var(--blue-deep); }
     var tiles = "";
     SPACERS.forEach(function (s, i) {
       var on = enabled[i];
-      tiles += '<button type="button" class="tile' + (!on ? " off" : counts[i] === 0 ? " zero" : "") + '" data-i="' + i + '" aria-pressed="' + on + '" aria-label="' + s.label + " spacer, " + (on ? "on" : "off") + '">' +
-        '<span class="chk"></span><span class="count">' + counts[i] + '</span><span class="size"><i class="dot c' + s.u + '"></i>' + s.label + '</span><span class="pn">' + s.pn + "</span></button>";
+      tiles += '<button type="button" class="tile' + (!on ? " off" : (counts[i] === 0 || drag) ? " zero" : "") + '" data-i="' + i + '" aria-pressed="' + on + '" aria-label="' + s.label + " spacer, " + (on ? "on" : "off") + '">' +
+        '<span class="chk"></span><span class="count">' + (drag ? "&ndash;" : counts[i]) + '</span><span class="size"><i class="dot c' + s.u + '"></i>' + s.label + '</span><span class="pn">' + s.pn + "</span></button>";
     });
     $("tiles").innerHTML = tiles;
     if (focusTile >= 0) {
@@ -419,10 +420,14 @@ tr.total td.num { color: var(--blue-deep); }
       bar += '<div class="seg blk' + (i % 2 ? " alt" : "") + (over ? " over" : "") + (drag && drag.i === i ? " dragging" : "") + '" data-i="' + i + '" style="left:' + pct(o.pos) + ";width:" + pct(o.u) + '"' +
         ' title="' + esc(o.label + ", " + where) + '">' + (o.u / total > 0.12 ? fmt(o.u) : "") + "</div>";
     });
-    spacerSegs.forEach(function (x) {
+    if (drag) {
+      gaps.forEach(function (g) {
+        bar += '<div class="seg empty" style="left:' + pct(g.start) + ";width:" + pct(g.len) + '" title="' + esc(fmt(g.len)) + ' open"></div>';
+      });
+    } else spacerSegs.forEach(function (x) {
       bar += '<div class="seg spacer c' + x.s.u + '" style="left:' + pct(x.pos) + ";width:" + pct(x.s.u) + '" title="' + x.s.label + ' spacer"></div>';
     });
-    holes.forEach(function (h) {
+    if (!drag) holes.forEach(function (h) {
       bar += '<div class="seg hole" style="left:' + pct(h.pos) + ";width:" + pct(h.len) + '" title="' + esc(fmt(h.len)) + ' not filled"></div>';
     });
     barEl.className = "bar" + (locked ? " locked" : "") + (drag ? " grabbing" : "");
@@ -453,10 +458,10 @@ tr.total td.num { color: var(--blue-deep); }
       rows += "<tr><td>" + esc(it.name) + (it.n > 1 ? " &times; " + it.n : "") + '</td><td class="num">' + fmt(it.each * it.n) + "</td></tr>";
     });
     SPACERS.forEach(function (s, i) {
-      if (counts[i] > 0) rows += "<tr><td>" + s.label + " spacer (" + s.pn + ") &times; " + counts[i] + '</td><td class="num">' + fmt(s.u * counts[i]) + "</td></tr>";
+      if (counts[i] > 0 && !drag) rows += "<tr><td>" + s.label + " spacer (" + s.pn + ") &times; " + counts[i] + '</td><td class="num">' + fmt(s.u * counts[i]) + "</td></tr>";
     });
-    if (leftover > 0) rows += '<tr><td>Not filled</td><td class="num">' + fmt(leftover) + "</td></tr>";
-    rows += '<tr class="total"><td>Total on shaft</td><td class="num">' + fmt(used + spacerU) + " (" + dec(used + spacerU) + ' in)</td></tr>';
+    if (leftover > 0 && !drag) rows += '<tr><td>Not filled</td><td class="num">' + fmt(leftover) + "</td></tr>";
+    rows += '<tr class="total"><td>Total on shaft</td><td class="num">' + fmt(drag ? total : used + spacerU) + " (" + dec(drag ? total : used + spacerU) + ' in)</td></tr>';
     $("rows").innerHTML = rows;
   }
 
