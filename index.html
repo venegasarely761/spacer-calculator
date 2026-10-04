@@ -23,7 +23,7 @@
   --alert: #b3261e;
   --alert-bg: #fdeeed;
   --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-  color-scheme: light;
+  color-scheme: light dark;
 }
 * { box-sizing: border-box; }
 html { background: transparent; }
@@ -35,11 +35,11 @@ body {
   line-height: 1.5;
   font-variant-numeric: tabular-nums;
 }
-.banner { position: relative; background: var(--blue); color: var(--white); padding: 18px 16px; text-align: center; border-radius: 16px; width: min(928px, calc(100% - 32px)); margin: 16px auto 0; }
-.ver { position: absolute; top: 10px; right: 16px; font-size: 12px; font-weight: 500; color: var(--white); opacity: 0.85; }
+.banner { position: relative; background: var(--blue); color: var(--white); padding: 11px 16px; text-align: center; border-radius: 16px; width: min(928px, calc(100% - 32px)); margin: 16px auto 0; }
+.ver { position: absolute; top: 8px; right: 16px; font-size: 11px; font-weight: 500; color: var(--white); opacity: 0.85; }
 .wrap { max-width: 960px; margin-inline: auto; }
-.banner h1 { margin: 0; font-size: clamp(22px, 4vw, 28px); font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
-.banner p { margin: 2px auto 0; font-size: 15px; opacity: 0.9; max-width: 56ch; text-wrap: balance; }
+.banner h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+.banner p { margin: 1px auto 0; font-size: 13px; opacity: 0.9; max-width: 56ch; text-wrap: balance; }
 
 main {
   max-width: 960px;
@@ -186,7 +186,7 @@ tr.total td.num { color: var(--blue-deep); }
 <body>
 
 <header class="banner">
-  <span class="ver" id="ver">v1.0.3</span>
+  <span class="ver" id="ver">v1.0.6</span>
   <div class="wrap">
     <h1>Motor Spacer Calculator</h1>
     <p>How many spacers fill the SplineXS</p>
