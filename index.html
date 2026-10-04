@@ -80,7 +80,7 @@ section { min-width: 0; display: grid; }
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
-  padding: 6px 8px 6px 12px;
+  padding: 5px 8px 5px 10px;
   border-radius: 12px;
   border: 1px solid var(--blue-soft);
 }
@@ -89,24 +89,24 @@ section { min-width: 0; display: grid; }
 .part .step:hover { background: var(--blue); color: var(--white); }
 .part.on { border-color: var(--blue-soft); }
 .part-main { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-width: 0; }
-.part-name { font-weight: 500; }
-.chip { font-size: 12px; font-weight: 500; color: var(--blue-deep); background: var(--blue-100); border-radius: 999px; padding: 1px 9px; white-space: nowrap; }
+.part-name { font-weight: 500; font-size: 12.5px; }
+.chip { font-size: 10.5px; font-weight: 500; color: var(--blue-deep); background: var(--blue-100); border-radius: 999px; padding: 1px 7px; white-space: nowrap; }
 .stepper { display: flex; align-items: center; gap: 2px; }
 .step {
-  width: 30px; height: 30px;
+  width: 26px; height: 26px;
   display: grid; place-items: center;
   border: 0; border-radius: 50%;
   background: var(--blue-100);
   color: var(--blue-deep);
-  font: 500 20px/1 var(--font);
+  font: 500 17px/1 var(--font);
   cursor: pointer;
 }
 .step:hover { background: var(--blue); color: var(--white); }
 .step:focus-visible, .reset:focus-visible { outline: 3px solid var(--blue-soft); outline-offset: 2px; }
 .qty {
-  width: 38px; text-align: center;
+  width: 30px; text-align: center;
   border: 0; background: transparent;
-  font: 500 17px var(--font); color: var(--ink);
+  font: 500 14px var(--font); color: var(--ink);
   padding: 4px 0;
   -moz-appearance: textfield;
   font-variant-numeric: tabular-nums;
@@ -185,7 +185,7 @@ tr.total td.num { color: var(--blue-deep); }
 <body>
 
 <header class="banner">
-  <span class="ver" id="ver">v1.0.1</span>
+  <span class="ver" id="ver">v1.0.2</span>
   <div class="wrap">
     <h1>Motor Spacer Calculator</h1>
     <p>How many spacers fill the SplineXS</p>
