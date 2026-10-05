@@ -23,10 +23,10 @@
   --alert: #b3261e;
   --alert-bg: #fdeeed;
   --font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 * { box-sizing: border-box; }
-html { background: transparent; }
+html { background: #e8f2fa; }
 body {
   background: transparent;
   color: var(--ink);
@@ -37,7 +37,7 @@ body {
 }
 .banner { position: relative; background: var(--blue); color: var(--white); padding: 11px 16px; text-align: center; border-radius: 16px; }
 .ver { position: absolute; top: 8px; right: 16px; font-size: 11px; font-weight: 500; color: var(--white); opacity: 0.85; }
-.shell { width: min(960px, calc(100% - 24px)); margin: 12px auto; padding: 10px; background: #e8f2fa; border: 1px solid #cfe3f3; border-radius: 22px; display: grid; gap: 8px; }
+.shell { width: 100%; max-width: 980px; margin: 0 auto; padding: 10px; background: transparent; border: 0; border-radius: 0; display: grid; gap: 8px; }
 .wrap { max-width: 960px; margin-inline: auto; }
 .banner h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
 .banner p { margin: 1px auto 0; font-size: 13px; opacity: 0.9; max-width: 56ch; text-wrap: balance; }
@@ -181,13 +181,30 @@ tr.total td { border-top: 1.5px solid var(--blue); font-weight: 700; color: var(
 tr.total td.num { color: var(--blue-deep); }
 .note { font-size: 13px; color: var(--ink-soft); margin: 0; }
 @media (prefers-reduced-motion: no-preference) { .step, .unit-field, .part { transition: background 0.15s ease, border-color 0.15s ease; } }
+@media (max-width: 520px) {
+  .shell { padding: 6px; gap: 6px; }
+  .banner { padding: 15px 12px 9px; border-radius: 14px; }
+  .banner h1 { font-size: 19px; }
+  .banner p { font-size: 12px; }
+  .ver { top: 3px; right: 10px; font-size: 10px; }
+  main { gap: 6px; }
+  .card { padding: 12px; gap: 12px; border-radius: 14px; }
+  .parts { grid-template-columns: minmax(0, 1fr); }
+  .hero .big { font-size: 20px; }
+  .tiles { gap: 6px; }
+  .tile { padding: 10px 4px; }
+  .tile .size { font-size: 12px; }
+  .tile .pn { font-size: 10.5px; }
+  .chk { top: 5px; right: 5px; }
+  .legend { gap: 4px 10px; }
+}
 </style>
 </head>
 <body>
 
 <div class="shell">
 <header class="banner">
-  <span class="ver" id="ver">v1.0.7</span>
+  <span class="ver" id="ver">v1.0.9</span>
   <div class="wrap">
     <h1>Motor Spacer Calculator</h1>
     <p>How many spacers fill the SplineXS</p>
